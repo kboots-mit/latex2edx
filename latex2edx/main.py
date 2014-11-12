@@ -803,7 +803,7 @@ class latex2edx(object):
                 toctree, method='html', pretty_print=True))
             tocf.close()
 
-        if len(kwdict) != 0:
+        if True: #len(kwdict) != 0:
             print "Writing kw json..."
             tocf = open('kwindex.json', 'w')
             tocf.write(tmploc+"json.dumps(kwtree.__dict__)")
