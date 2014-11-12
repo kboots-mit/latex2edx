@@ -526,7 +526,7 @@ class latex2edx(object):
                         vert.find('./p/toclabel'), vert.find('./toclabel')]
                     for label in labels:
                         if label is not None:
-                            print label.tostring()
+                            print label.tostring(root, pretty_print=True)
                     for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
                                            './/table[@class="equation"]|'
                                            './/table[@class="eqnarray"]|'
