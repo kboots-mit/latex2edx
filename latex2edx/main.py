@@ -546,11 +546,10 @@ class latex2edx(object):
                 if elem.get('tmploc') is None:
                     elem.set('tmploc', locstr)
 
-        if len(tocdict) != 0:
-            print "Writing ToC index content..."
-            tocf = open('tocindex.html', 'w')
-            tocf.write(etree.tostring(
-                toctree, method='html', pretty_print=True))
+        if len(mapdict) != 0:
+            print "Writing Keywor JSON..."
+            tocf = open('keyword.json', 'w')
+            tocf.write(mapdict)
             tocf.close()
 
 
