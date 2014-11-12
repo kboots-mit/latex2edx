@@ -495,12 +495,10 @@ class latex2edx(object):
                 mapdict[locstr] = [
                     '../courseware/{}/{}'.format(chapurl, sequrl),
                     seq.get('display_name'), '.'.join([chapref, seqref])]
-                labels = [
-                    seq.find('./p/label'), seq.find('./label'),
-                    seq.find('./p/toclabel'), seq.find('./toclabel')]
+                labels = [seq.find('./p/keyword'), seq.find('./keyword')]
                 for label in labels:
                     if label is not None:
-                        label.set('tmploc', locstr + '.0')
+                        print json.dumps(label, default=lambda o: o.__dict__)
                 if seqnum == 1:
                     mapdict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
@@ -523,12 +521,10 @@ class latex2edx(object):
                                                         vertnum),
                         vert.get('display_name'),
                         '.'.join([chapref, seqref, vertref])]
-                    labels = [
-                        vert.find('./p/label'), vert.find('./label'),
-                        vert.find('./p/toclabel'), vert.find('./toclabel')]
+                    labels = [vert.find('./p/keyword'), vert.find('./keyword')]
                     for label in labels:
                         if label is not None:
-                            label.set('tmploc', locstr + '.0')
+                            print json.dumps(label, default=lambda o: o.__dict__)
                     for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
                                            './/table[@class="equation"]|'
                                            './/table[@class="eqnarray"]|'
