@@ -816,47 +816,7 @@ class latex2edx(object):
         chapref = '0'
         for label in tree.xpath('.//keyword'):
             locstr = label.get('tmploc')
-            if locstr.split('.')[-1] == '0':
-                locref = mapdict[locstr[:-2]][2]
-                hlabel = True
-            else:
-                locref = mapdict[locstr][2]
-                hlabel = False
-            labelref = label.text
-            if locref.split('.')[0] != chapref:
-                chapref = locref.split('.')[0]
-                labelcnt = {}  # Reset label count
-            if hlabel:
-                labeldict[labelref] = [locstr, locref]
-            else:
-                labeltag = labelref.split(':')[0]
-                if labeltag in labelcnt:
-                    labelcnt[labeltag] += 1
-                else:
-                    labelcnt[labeltag] = 1
-                if chapref == '0':
-                    labelstr = '{}{}'.format(labeltag, labelcnt[labeltag])
-                else:
-                    labelstr = '{}{}.{}'.format(labeltag, chapref,
-                                                labelcnt[labeltag])
-                labeldict[labelref] = [locstr, labelstr]
-            # Get label tail and parent text, and remove label
-            labeltail = label.tail
-            plabel = label.getparent()
-            ptext = plabel.text
-            if labeltail != ' ' and (labeltail is not None):
-                if ptext == '\n' or (ptext is None):
-                    ptext = labeltail
-                else:
-                    ptext = ptext[:-1] + labeltail  # remove ptext CR, add tail
-            if label.tag == 'keyword':
-                kwlist.append(labelref)
-                kwdict[labelref] = [locstr, ptext]
-            if plabel.tag == 'p':
-                label = plabel
-                plabel = plabel.getparent()
-            plabel.text = ptext
-            plabel.remove(label)
+            kwdict[0] = locstr
 
         if len(kwdict) != 0:
             print "Writing kw json..."
