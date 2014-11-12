@@ -861,7 +861,7 @@ class latex2edx(object):
         if len(kwdict) != 0:
             print "Writing kw json..."
             tocf = open('kwindex.json', 'w')
-            tocf.write(tmploc+"json.dumps(kwtree.__dict__)")
+            tocf.write(kwdict+"json.dumps(kwdict.__dict__)")
             tocf.close()
 
         class MissingLabel(Exception):
