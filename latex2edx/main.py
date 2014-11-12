@@ -546,14 +546,12 @@ class latex2edx(object):
                 if elem.get('tmploc') is None:
                     elem.set('tmploc', locstr)
 
-     if len(tocdict) != 0:
+        if len(tocdict) != 0:
             print "Writing ToC index content..."
             tocf = open('tocindex.html', 'w')
             tocf.write(etree.tostring(
                 toctree, method='html', pretty_print=True))
             tocf.close()
-
-
 
 
     def handle_refs(self, tree):
