@@ -158,6 +158,7 @@ class latex2edx(object):
                             self.fix_table,
                             self.fix_table_p,
                             self.fix_latex_minipage_div,
+                            self.build_keyword_json
                             self.handle_refs,
                             self.process_edxcite,
                             self.process_askta,
@@ -439,7 +440,7 @@ class latex2edx(object):
         for div in tree.findall('.//div[@class="minipage"]'):
             div.tag = 'text'
 
-    def handle_refs(self, tree):
+    def build_keyword_json(self, tree):
         '''
         Process references to sections of content -- create section numbering and
         reference should be a link that opens in a new tab to the desired component.
@@ -456,6 +457,7 @@ class latex2edx(object):
         chapnum = 0
         chapref = seqref = vertref = '0'
         for chapter in tree.findall('.//chapter'):
+            print "Hello World"
             chapnum += 1
             if chapter.get('refnum') is not None:
                 chapref = chapter.get('refnum')
@@ -466,12 +468,9 @@ class latex2edx(object):
             mapdict[locstr] = [
                 '../courseware/{}'.format(chapurl),
                 chapter.get('display_name'), chapref]
-            print "looping through chapter{}".format(chapurl)
-
             labels = [
                 chapter.find('./p/label'), chapter.find('./label'),
-                chapter.find('./p/toclabel'), chapter.find('./toclabel'),
-                chapter.find('./p/keyword'), chapter.find('./keyword')]
+                chapter.find('./p/toclabel'), chapter.find('./toclabel')]
             for label in labels:
                 if label is not None:
                     label.set('tmploc', locstr + '.0')
@@ -495,8 +494,7 @@ class latex2edx(object):
                     seq.get('display_name'), '.'.join([chapref, seqref])]
                 labels = [
                     seq.find('./p/label'), seq.find('./label'),
-                    seq.find('./p/toclabel'), seq.find('./toclabel'),
-                    seq.find('./p/keyword'), seq.find('./keyword')]
+                    seq.find('./p/toclabel'), seq.find('./toclabel')]
                 for label in labels:
                     if label is not None:
                         label.set('tmploc', locstr + '.0')
@@ -524,25 +522,139 @@ class latex2edx(object):
                         '.'.join([chapref, seqref, vertref])]
                     labels = [
                         vert.find('./p/label'), vert.find('./label'),
-                        vert.find('./p/toclabel'), vert.find('./toclabel'),
-                        vert.find('./p/keyword'), vert.find('./keyword')]
+                        vert.find('./p/toclabel'), vert.find('./toclabel')]
                     for label in labels:
                         if label is not None:
                             label.set('tmploc', locstr + '.0')
-                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
+                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
                                            './/table[@class="equation"]|'
                                            './/table[@class="eqnarray"]|'
                                            './/div[@class="figure"]'):
                         elem.set('tmploc', locstr)
                 locstr = '.'.join(locstr.split('.')[:-1])
-                for elem in seq.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
+                for elem in seq.xpath('.//tocref|.//toclabel|.//label|'
                                       './/table[@class="equation"]|'
                                       './/table[@class="eqnarray"]|'
                                       './/div[@class="figure"]'):
                     if elem.get('tmploc') is None:
                         elem.set('tmploc', locstr)
             locstr = '.'.join(locstr.split('.')[:-1])
-            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
+            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|'
+                                      './/table[@class="equation"]|'
+                                      './/table[@class="eqnarray"]|'
+                                      './/div[@class="figure"]'):
+                if elem.get('tmploc') is None:
+                    elem.set('tmploc', locstr)
+
+     if len(tocdict) != 0:
+            print "Writing ToC index content..."
+            tocf = open('tocindex.html', 'w')
+            tocf.write(etree.tostring(
+                toctree, method='html', pretty_print=True))
+            tocf.close()
+
+
+
+
+    def handle_refs(self, tree):
+        '''
+        Process references to sections of content -- create section numbering and
+        reference should be a link that opens in a new tab to the desired component.
+        If the --popups option is specified, equations and figure references open a new window.
+        '''
+        if self.section_only:
+            return
+        # EVH: Build course map from tree.
+        course = tree.find('.//course')
+        cnumber = course.get('number')
+        # EVH: Navigate course and set a 'tmploc' attribute with location for desired items
+        maplist = []  # ['loc. str.']
+        mapdict = {}  # {'location str.':['URL','display_name','refnum']}
+        chapnum = 0
+        chapref = seqref = vertref = '0'
+        for chapter in tree.findall('.//chapter'):
+            chapnum += 1
+            if chapter.get('refnum') is not None:
+                chapref = chapter.get('refnum')
+                seqref = vertref = '0'
+            chapurl = chapter.get('url_name')
+            locstr = '{}'.format(chapnum)
+            maplist.append(locstr)
+            mapdict[locstr] = [
+                '../courseware/{}'.format(chapurl),
+                chapter.get('display_name'), chapref]
+            labels = [
+                chapter.find('./p/label'), chapter.find('./label'),
+                chapter.find('./p/toclabel'), chapter.find('./toclabel')]
+            for label in labels:
+                if label is not None:
+                    label.set('tmploc', locstr + '.0')
+            seqnum = 0
+            for child1 in chapter:
+                if child1.tag == 'p' and (child1.find('./') is not None):
+                    seq = child1[0]
+                else:
+                    seq = child1
+                if seq.tag not in ['sequential', 'vertical', 'section']:
+                    continue
+                seqnum += 1
+                if seq.get('refnum') is not None:
+                    seqref = seq.get('refnum')
+                    vertref = '0'
+                sequrl = seq.get('url_name')
+                locstr = '{}.{}'.format(chapnum, seqnum)
+                maplist.append(locstr)
+                mapdict[locstr] = [
+                    '../courseware/{}/{}'.format(chapurl, sequrl),
+                    seq.get('display_name'), '.'.join([chapref, seqref])]
+                labels = [
+                    seq.find('./p/label'), seq.find('./label'),
+                    seq.find('./p/toclabel'), seq.find('./toclabel')]
+                for label in labels:
+                    if label is not None:
+                        label.set('tmploc', locstr + '.0')
+                if seqnum == 1:
+                    mapdict['{}'.format(chapnum)][0] = (
+                        '../courseware/{}/{}/1'.format(chapurl, sequrl))
+                vertnum = 0
+                for child2 in seq:
+                    if child2.tag == 'p' and (child2.find('./') is not None):
+                        vert = child2.find('./')
+                    else:
+                        vert = child2
+                    if vert.tag not in ['sequential', 'vertical', 'section',
+                                        'problem', 'html']:
+                        continue
+                    vertnum += 1
+                    if vert.get('refnum') is not None:
+                        vertref = vert.get('refnum')
+                    locstr = '{}.{}.{}'.format(chapnum, seqnum, vertnum)
+                    maplist.append(locstr)
+                    mapdict[locstr] = [
+                        '../courseware/{}/{}/{}'.format(chapurl, sequrl,
+                                                        vertnum),
+                        vert.get('display_name'),
+                        '.'.join([chapref, seqref, vertref])]
+                    labels = [
+                        vert.find('./p/label'), vert.find('./label'),
+                        vert.find('./p/toclabel'), vert.find('./toclabel')]
+                    for label in labels:
+                        if label is not None:
+                            label.set('tmploc', locstr + '.0')
+                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
+                                           './/table[@class="equation"]|'
+                                           './/table[@class="eqnarray"]|'
+                                           './/div[@class="figure"]'):
+                        elem.set('tmploc', locstr)
+                locstr = '.'.join(locstr.split('.')[:-1])
+                for elem in seq.xpath('.//tocref|.//toclabel|.//label|'
+                                      './/table[@class="equation"]|'
+                                      './/table[@class="eqnarray"]|'
+                                      './/div[@class="figure"]'):
+                    if elem.get('tmploc') is None:
+                        elem.set('tmploc', locstr)
+            locstr = '.'.join(locstr.split('.')[:-1])
+            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|'
                                       './/table[@class="equation"]|'
                                       './/table[@class="eqnarray"]|'
                                       './/div[@class="figure"]'):
@@ -800,30 +912,11 @@ class latex2edx(object):
                         toctable, 'span', {'itemprop': 'description'})
                     tablecont.text = tocname
             tocbody.append(toctable)
-
         if len(tocdict) != 0:
             print "Writing ToC index content..."
             tocf = open('tocindex.html', 'w')
             tocf.write(etree.tostring(
                 toctree, method='html', pretty_print=True))
-            tocf.close()
-
-        # EVH: Build cross reference dictionaries for ToC refs
-        kwlist = []  # ['toclabel']
-        kwdict = {}  # {'toclabel',['locstr','label text']}
-        kwrefdict = {}  # {'tocref':[['loc. str.'],['parent name']]}
-        labeldict = {}  # {'labeltag':['loc. str.','chapnum.labelnum']}
-        labelcnt = {}  # {'labeltag':cnt}
-       
-        chapref = '0'
-        for label in tree.xpath('.//keyword'):
-            locstr = label.get('tmploc')
-            kwdict[0] = locstr
-
-        if len(kwdict) != 0:
-            print "Writing kw json..."
-            tocf = open('kwindex.json', 'w')
-            tocf.write(kwdict+"json.dumps(kwdict.__dict__)")
             tocf.close()
 
         class MissingLabel(Exception):
