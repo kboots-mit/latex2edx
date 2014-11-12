@@ -454,6 +454,8 @@ class latex2edx(object):
         # EVH: Navigate course and set a 'tmploc' attribute with location for desired items
         maplist = []  # ['loc. str.']
         mapdict = {}  # {'location str.':['URL','display_name','refnum']}
+        kwlist = [] # ['keyword']
+        kwdict = {} # {'keyword':['location str','location str',...]}
         chapnum = 0
         chapref = seqref = vertref = '0'
         for chapter in tree.findall('.//chapter'):
@@ -468,12 +470,13 @@ class latex2edx(object):
             mapdict[locstr] = [
                 '../courseware/{}'.format(chapurl),
                 chapter.get('display_name'), chapref]
-            labels = [
-                chapter.find('./p/label'), chapter.find('./label'),
-                chapter.find('./p/toclabel'), chapter.find('./toclabel')]
+            labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
                 if label is not None:
-                    label.set('tmploc', locstr + '.0')
+                    print json.dumps(label, default=lambda o: o.__dict__)
+                    # keyword = label.get()
+                    # kwlis.append()
+                    # label.set('tmploc', locstr + '.0')
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
@@ -547,10 +550,15 @@ class latex2edx(object):
                     elem.set('tmploc', locstr)
 
         if len(mapdict) != 0:
-            print "Writing Keywor JSON..."
-            tocf = open('keyword.json', 'w')
-            tocf.write(json.dumps(mapdict, default=lambda o: o.__dict__))
-            tocf.close()
+            print "Writing Course Map JSON..."
+            cmjson = open('course_map.json', 'w')
+            cmjson.write(json.dumps(mapdict, default=lambda o: o.__dict__))
+            cmjson.close()
+        if len(mapdict) != 0:
+            print "Writing Keyword JSON..."
+            kwjson = open('keyword.json', 'w')
+            kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
+            kwjson.close()    
 
 
     def handle_refs(self, tree):
