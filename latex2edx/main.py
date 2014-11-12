@@ -522,7 +522,9 @@ class latex2edx(object):
                                                         vertnum),
                         vert.get('display_name'),
                         '.'.join([chapref, seqref, vertref])]
-                    labels = [vert.find('./p/keyword'), vert.find('./keyword')]
+                    labels = [
+                        vert.find('./p/label'), vert.find('./label'),
+                        vert.find('./p/toclabel'), vert.find('./toclabel')]
                     for label in labels:
                         if label is not None:
                             print json.dumps(label, default=lambda o: o.__dict__)
