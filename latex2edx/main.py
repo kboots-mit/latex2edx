@@ -472,9 +472,8 @@ class latex2edx(object):
                 chapter.get('display_name'), chapref]
             labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
-                print json.dumps(label, default=lambda o: o.__dict__)
                 if label is not None:
-                    print json.dumps(label, default=lambda o: o.__dict__)
+                    print label.tostring()
                     # keyword = label.get()
                     # kwlis.append()
                     # label.set('tmploc', locstr + '.0')
@@ -527,7 +526,7 @@ class latex2edx(object):
                         vert.find('./p/toclabel'), vert.find('./toclabel')]
                     for label in labels:
                         if label is not None:
-                            print json.dumps(label, default=lambda o: o.__dict__)
+                            print label.tostring()
                     for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
                                            './/table[@class="equation"]|'
                                            './/table[@class="eqnarray"]|'
