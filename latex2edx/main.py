@@ -472,6 +472,7 @@ class latex2edx(object):
                 chapter.get('display_name'), chapref]
             labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
+                print json.dumps(label, default=lambda o: o.__dict__)
                 if label is not None:
                     print json.dumps(label, default=lambda o: o.__dict__)
                     # keyword = label.get()
