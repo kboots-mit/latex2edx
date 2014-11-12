@@ -802,6 +802,12 @@ class latex2edx(object):
                 toctree, method='html', pretty_print=True))
             tocf.close()
 
+        if True:
+            print "Writing kw json..."
+            tocf = open('kwindex.json', 'w')
+            tocf.write("Hello json.dumps(c.__dict__) len(kwdict) != 0")
+            tocf.close()
+
         class MissingLabel(Exception):
             '''
             Exception raised when a referrence to a non-existent label is found
