@@ -549,7 +549,7 @@ class latex2edx(object):
         if len(mapdict) != 0:
             print "Writing Keywor JSON..."
             tocf = open('keyword.json', 'w')
-            tocf.write(mapdict)
+            tocf.write(json.dumps(mapdict, default=lambda o: o.__dict__))
             tocf.close()
 
 
