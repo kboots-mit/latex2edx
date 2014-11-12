@@ -468,7 +468,8 @@ class latex2edx(object):
                 chapter.get('display_name'), chapref]
             labels = [
                 chapter.find('./p/label'), chapter.find('./label'),
-                chapter.find('./p/toclabel'), chapter.find('./toclabel')]
+                chapter.find('./p/toclabel'), chapter.find('./toclabel'),
+                chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
                 if label is not None:
                     label.set('tmploc', locstr + '.0')
@@ -802,10 +803,10 @@ class latex2edx(object):
                 toctree, method='html', pretty_print=True))
             tocf.close()
 
-        if True:
+        if len(kwdict) != 0:
             print "Writing kw json..."
             tocf = open('kwindex.json', 'w')
-            tocf.write("Hello json.dumps(c.__dict__) len(kwdict) != 0")
+            tocf.write(tmploc+"json.dumps(kwtree.__dict__)")
             tocf.close()
 
         class MissingLabel(Exception):
