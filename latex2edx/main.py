@@ -158,7 +158,7 @@ class latex2edx(object):
                             self.fix_table,
                             self.fix_table_p,
                             self.fix_latex_minipage_div,
-                            self.build_keyword_json
+                            self.build_keyword_json,
                             self.handle_refs,
                             self.process_edxcite,
                             self.process_askta,
