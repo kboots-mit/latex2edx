@@ -466,6 +466,8 @@ class latex2edx(object):
             mapdict[locstr] = [
                 '../courseware/{}'.format(chapurl),
                 chapter.get('display_name'), chapref]
+            print "looping through chapter{}".format(chapurl)
+
             labels = [
                 chapter.find('./p/label'), chapter.find('./label'),
                 chapter.find('./p/toclabel'), chapter.find('./toclabel'),
