@@ -493,7 +493,8 @@ class latex2edx(object):
                     seq.get('display_name'), '.'.join([chapref, seqref])]
                 labels = [
                     seq.find('./p/label'), seq.find('./label'),
-                    seq.find('./p/toclabel'), seq.find('./toclabel')]
+                    seq.find('./p/toclabel'), seq.find('./toclabel'),
+                    seq.find('./p/keyword'), seq.find('./keyword')]
                 for label in labels:
                     if label is not None:
                         label.set('tmploc', locstr + '.0')
@@ -521,24 +522,25 @@ class latex2edx(object):
                         '.'.join([chapref, seqref, vertref])]
                     labels = [
                         vert.find('./p/label'), vert.find('./label'),
-                        vert.find('./p/toclabel'), vert.find('./toclabel')]
+                        vert.find('./p/toclabel'), vert.find('./toclabel'),
+                        vert.find('./p/keyword'), vert.find('./keyword')]
                     for label in labels:
                         if label is not None:
                             label.set('tmploc', locstr + '.0')
-                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
+                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
                                            './/table[@class="equation"]|'
                                            './/table[@class="eqnarray"]|'
                                            './/div[@class="figure"]'):
                         elem.set('tmploc', locstr)
                 locstr = '.'.join(locstr.split('.')[:-1])
-                for elem in seq.xpath('.//tocref|.//toclabel|.//label|'
+                for elem in seq.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
                                       './/table[@class="equation"]|'
                                       './/table[@class="eqnarray"]|'
                                       './/div[@class="figure"]'):
                     if elem.get('tmploc') is None:
                         elem.set('tmploc', locstr)
             locstr = '.'.join(locstr.split('.')[:-1])
-            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|'
+            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|.//keyword|'
                                       './/table[@class="equation"]|'
                                       './/table[@class="eqnarray"]|'
                                       './/div[@class="figure"]'):
@@ -796,6 +798,7 @@ class latex2edx(object):
                         toctable, 'span', {'itemprop': 'description'})
                     tablecont.text = tocname
             tocbody.append(toctable)
+
         if len(tocdict) != 0:
             print "Writing ToC index content..."
             tocf = open('tocindex.html', 'w')
@@ -803,7 +806,59 @@ class latex2edx(object):
                 toctree, method='html', pretty_print=True))
             tocf.close()
 
-        if True: #len(kwdict) != 0:
+        # EVH: Build cross reference dictionaries for ToC refs
+        kwlist = []  # ['toclabel']
+        kwdict = {}  # {'toclabel',['locstr','label text']}
+        kwrefdict = {}  # {'tocref':[['loc. str.'],['parent name']]}
+        labeldict = {}  # {'labeltag':['loc. str.','chapnum.labelnum']}
+        labelcnt = {}  # {'labeltag':cnt}
+       
+        chapref = '0'
+        for label in tree.xpath('.//keyword'):
+            locstr = label.get('tmploc')
+            if locstr.split('.')[-1] == '0':
+                locref = mapdict[locstr[:-2]][2]
+                hlabel = True
+            else:
+                locref = mapdict[locstr][2]
+                hlabel = False
+            labelref = label.text
+            if locref.split('.')[0] != chapref:
+                chapref = locref.split('.')[0]
+                labelcnt = {}  # Reset label count
+            if hlabel:
+                labeldict[labelref] = [locstr, locref]
+            else:
+                labeltag = labelref.split(':')[0]
+                if labeltag in labelcnt:
+                    labelcnt[labeltag] += 1
+                else:
+                    labelcnt[labeltag] = 1
+                if chapref == '0':
+                    labelstr = '{}{}'.format(labeltag, labelcnt[labeltag])
+                else:
+                    labelstr = '{}{}.{}'.format(labeltag, chapref,
+                                                labelcnt[labeltag])
+                labeldict[labelref] = [locstr, labelstr]
+            # Get label tail and parent text, and remove label
+            labeltail = label.tail
+            plabel = label.getparent()
+            ptext = plabel.text
+            if labeltail != ' ' and (labeltail is not None):
+                if ptext == '\n' or (ptext is None):
+                    ptext = labeltail
+                else:
+                    ptext = ptext[:-1] + labeltail  # remove ptext CR, add tail
+            if label.tag == 'kwlabel':
+                kwlist.append(labelref)
+                kwdict[labelref] = [locstr, ptext]
+            if plabel.tag == 'p':
+                label = plabel
+                plabel = plabel.getparent()
+            plabel.text = ptext
+            plabel.remove(label)
+
+        if len(kwdict) != 0:
             print "Writing kw json..."
             tocf = open('kwindex.json', 'w')
             tocf.write(tmploc+"json.dumps(kwtree.__dict__)")
