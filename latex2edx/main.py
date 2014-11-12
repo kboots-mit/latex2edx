@@ -849,7 +849,7 @@ class latex2edx(object):
                     ptext = labeltail
                 else:
                     ptext = ptext[:-1] + labeltail  # remove ptext CR, add tail
-            if label.tag == 'kwlabel':
+            if label.tag == 'keyword':
                 kwlist.append(labelref)
                 kwdict[labelref] = [locstr, ptext]
             if plabel.tag == 'p':
