@@ -540,7 +540,7 @@ class latex2edx(object):
                                 kwdict[keyword]=[locstr]
         for keyword in tree.findall('.//keyword'):
             pkey = keyword.getparent()
-            pkey.remove(tocref)
+            pkey.remove(keyword)
 
 
         if len(coursedict) != 0:
