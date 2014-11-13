@@ -475,6 +475,7 @@ class latex2edx(object):
                 if label is not None:
                     keyword = label.text
                     kwlist.append(keyword)
+                    kwdict[keyword].pop(coursedict[locstr][0])
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
