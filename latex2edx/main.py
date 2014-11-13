@@ -474,9 +474,9 @@ class latex2edx(object):
             for label in labels:
                 if label is not None:
                     keyword = label.text
-                    if keyword in kwlist
+                    if keyword in kwlist:
                         kwdict[keyword].pop(locstr)
-                    else
+                    else:
                         kwlist.append(keyword)
                         kwdict[keyword]=[locstr]
             seqnum = 0
