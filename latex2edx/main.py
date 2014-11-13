@@ -541,7 +541,7 @@ class latex2edx(object):
             kwjson = open('keyword.json', 'w')
             kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
             kwjson.close()    
-        if len(kwlookup) != 0:
+        if len(kwlist) != 0:
             print "Writing Keyword Lookup JSON..."
             kwjson = open('keyword_list.json', 'w')
             kwjson.write(json.dumps(kwlist, default=lambda o: o.__dict__))
