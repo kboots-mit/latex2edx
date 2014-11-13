@@ -456,8 +456,7 @@ class latex2edx(object):
         courselist = []  # ['loc. str.']
         coursedict = {}  # {'location str.':['URL','display_name','refnum']}
         kwlist = [] # ['keyword']
-        kwarray = [] # [{kwobject},...]
-        kwdict = {} # { label:'keyword', value: ['location str','location str',...]}
+        kwdict = {} # {'keyword':['location str','location str',...]}
         chapnum = 0
         chapref = seqref = vertref = '0'
         for chapter in tree.findall('.//chapter'):
@@ -476,14 +475,11 @@ class latex2edx(object):
             for label in labels:
                 if label is not None:
                     keyword = label.text
-                    kwdict['label'] = keyword
-                    kwdict['value'] = locstr
-                    kwarray.append(kwdict)
-                    # if keyword in kwlist:
-                    #     kwdict[keyword].append(locstr)
-                    # else:
-                    #     kwlist.append(keyword)
-                    #     kwdict[keyword]=[locstr]
+                    if keyword in kwlist:
+                        kwdict[keyword].append(locstr)
+                    else:
+                        kwlist.append(keyword)
+                        kwdict[keyword]=[locstr]
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
@@ -540,10 +536,10 @@ class latex2edx(object):
             cmjson = open('course_map.json', 'w')
             cmjson.write(json.dumps(coursedict, default=lambda o: o.__dict__))
             cmjson.close()
-        if len(kwarray) != 0:
+        if len(kwdict) != 0:
             print "Writing Keyword JSON..."
             kwjson = open('keyword.json', 'w')
-            kwjson.write(json.dumps(kwarray, default=lambda o: o.__dict__))
+            kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
             kwjson.close()    
 
 
