@@ -474,8 +474,11 @@ class latex2edx(object):
             for label in labels:
                 if label is not None:
                     keyword = label.text
-                    kwlist.append(keyword)
-                    kwdict[keyword]=coursedict[locstr][0]
+                    if keyword in kwlist
+                        kwdict[keyword].pop(locstr)
+                    else
+                        kwlist.append(keyword)
+                        kwdict[keyword]=[locstr]
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
