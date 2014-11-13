@@ -440,102 +440,102 @@ class latex2edx(object):
         for div in tree.findall('.//div[@class="minipage"]'):
             div.tag = 'text'
 
-    def build_keyword_json(self, tree):
-        '''
-        Process references to sections of content -- create section numbering and
-        reference should be a link that opens in a new tab to the desired component.
-        If the --popups option is specified, equations and figure references open a new window.
-        '''
-        if self.section_only:
-            return
-        # EVH: Build course map from tree.
-        course = tree.find('.//course')
-        cnumber = course.get('number')
-        # EVH: Navigate course and set a 'tmploc' attribute with location for desired items
-        maplist = []  # ['loc. str.']
-        mapdict = {}  # {'location str.':['URL','display_name','refnum']}
-        kwlist = [] # ['keyword']
-        kwdict = {} # {'keyword':['location str','location str',...]}
-        chapnum = 0
-        chapref = seqref = vertref = '0'
-        for chapter in tree.findall('.//chapter'):
-            print "Hello World"
-            chapnum += 1
-            if chapter.get('refnum') is not None:
-                chapref = chapter.get('refnum')
-                seqref = vertref = '0'
-            chapurl = chapter.get('url_name')
-            locstr = '{}'.format(chapnum)
-            maplist.append(locstr)
-            mapdict[locstr] = [
-                '../courseware/{}'.format(chapurl),
-                chapter.get('display_name'), chapref]
-            labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
-            for label in labels:
-                if label is not None:
-                    print "Keyword"
-                    # keyword = "test" #label.get()
-                    # kwlist.append(keyword)
-                    # label.set('tmploc', locstr + '.0')
-            seqnum = 0
-            for child1 in chapter:
-                if child1.tag == 'p' and (child1.find('./') is not None):
-                    seq = child1[0]
-                else:
-                    seq = child1
-                if seq.tag not in ['sequential', 'vertical', 'section']:
-                    continue
-                seqnum += 1
-                if seq.get('refnum') is not None:
-                    seqref = seq.get('refnum')
-                    vertref = '0'
-                sequrl = seq.get('url_name')
-                locstr = '{}.{}'.format(chapnum, seqnum)
-                maplist.append(locstr)
-                mapdict[locstr] = [
-                    '../courseware/{}/{}'.format(chapurl, sequrl),
-                    seq.get('display_name'), '.'.join([chapref, seqref])]
-                labels = [seq.find('./p/keyword'), seq.find('./keyword')]
-                for label in labels:
-                    if label is not None:
-                        print json.dumps(label, default=lambda o: o.__dict__)
-                if seqnum == 1:
-                    mapdict['{}'.format(chapnum)][0] = (
-                        '../courseware/{}/{}/1'.format(chapurl, sequrl))
-                vertnum = 0
-                for child2 in seq:
-                    if child2.tag == 'p' and (child2.find('./') is not None):
-                        vert = child2.find('./')
-                    else:
-                        vert = child2
-                    if vert.tag not in ['sequential', 'vertical', 'section',
-                                        'problem', 'html']:
-                        continue
-                    vertnum += 1
-                    if vert.get('refnum') is not None:
-                        vertref = vert.get('refnum')
-                    locstr = '{}.{}.{}'.format(chapnum, seqnum, vertnum)
-                    maplist.append(locstr)
-                    mapdict[locstr] = [
-                        '../courseware/{}/{}/{}'.format(chapurl, sequrl,
-                                                        vertnum),
-                        vert.get('display_name'),
-                        '.'.join([chapref, seqref, vertref])]
-                    labels = [vert.find('./p/keyword'), vert.find('./keyword')]
-                    for label in labels:
-                        if label is not None:
-                            print label.tostring(root, pretty_print=True)
+    # def build_keyword_json(self, tree):
+    #     '''
+    #     Process references to sections of content -- create section numbering and
+    #     reference should be a link that opens in a new tab to the desired component.
+    #     If the --popups option is specified, equations and figure references open a new window.
+    #     '''
+    #     if self.section_only:
+    #         return
+    #     # EVH: Build course map from tree.
+    #     course = tree.find('.//course')
+    #     cnumber = course.get('number')
+    #     # EVH: Navigate course and set a 'tmploc' attribute with location for desired items
+    #     maplist = []  # ['loc. str.']
+    #     mapdict = {}  # {'location str.':['URL','display_name','refnum']}
+    #     kwlist = [] # ['keyword']
+    #     kwdict = {} # {'keyword':['location str','location str',...]}
+    #     chapnum = 0
+    #     chapref = seqref = vertref = '0'
+    #     for chapter in tree.findall('.//chapter'):
+    #         print "Hello World"
+    #         chapnum += 1
+    #         if chapter.get('refnum') is not None:
+    #             chapref = chapter.get('refnum')
+    #             seqref = vertref = '0'
+    #         chapurl = chapter.get('url_name')
+    #         locstr = '{}'.format(chapnum)
+    #         maplist.append(locstr)
+    #         mapdict[locstr] = [
+    #             '../courseware/{}'.format(chapurl),
+    #             chapter.get('display_name'), chapref]
+    #         labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
+    #         for label in labels:
+    #             if label is not None:
+    #                 print "Keyword"
+    #                 # keyword = "test" #label.get()
+    #                 # kwlist.append(keyword)
+    #                 # label.set('tmploc', locstr + '.0')
+    #         seqnum = 0
+    #         for child1 in chapter:
+    #             if child1.tag == 'p' and (child1.find('./') is not None):
+    #                 seq = child1[0]
+    #             else:
+    #                 seq = child1
+    #             if seq.tag not in ['sequential', 'vertical', 'section']:
+    #                 continue
+    #             seqnum += 1
+    #             if seq.get('refnum') is not None:
+    #                 seqref = seq.get('refnum')
+    #                 vertref = '0'
+    #             sequrl = seq.get('url_name')
+    #             locstr = '{}.{}'.format(chapnum, seqnum)
+    #             maplist.append(locstr)
+    #             mapdict[locstr] = [
+    #                 '../courseware/{}/{}'.format(chapurl, sequrl),
+    #                 seq.get('display_name'), '.'.join([chapref, seqref])]
+    #             labels = [seq.find('./p/keyword'), seq.find('./keyword')]
+    #             for label in labels:
+    #                 if label is not None:
+    #                     print json.dumps(label, default=lambda o: o.__dict__)
+    #             if seqnum == 1:
+    #                 mapdict['{}'.format(chapnum)][0] = (
+    #                     '../courseware/{}/{}/1'.format(chapurl, sequrl))
+    #             vertnum = 0
+    #             for child2 in seq:
+    #                 if child2.tag == 'p' and (child2.find('./') is not None):
+    #                     vert = child2.find('./')
+    #                 else:
+    #                     vert = child2
+    #                 if vert.tag not in ['sequential', 'vertical', 'section',
+    #                                     'problem', 'html']:
+    #                     continue
+    #                 vertnum += 1
+    #                 if vert.get('refnum') is not None:
+    #                     vertref = vert.get('refnum')
+    #                 locstr = '{}.{}.{}'.format(chapnum, seqnum, vertnum)
+    #                 maplist.append(locstr)
+    #                 mapdict[locstr] = [
+    #                     '../courseware/{}/{}/{}'.format(chapurl, sequrl,
+    #                                                     vertnum),
+    #                     vert.get('display_name'),
+    #                     '.'.join([chapref, seqref, vertref])]
+    #                 labels = [vert.find('./p/keyword'), vert.find('./keyword')]
+    #                 for label in labels:
+    #                     if label is not None:
+    #                         print label.tostring(root, pretty_print=True)
 
-        if len(mapdict) != 0:
-            print "Writing Course Map JSON..."
-            cmjson = open('course_map.json', 'w')
-            cmjson.write(json.dumps(mapdict, default=lambda o: o.__dict__))
-            cmjson.close()
-        if len(mapdict) != 0:
-            print "Writing Keyword JSON..."
-            kwjson = open('keyword.json', 'w')
-            kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
-            kwjson.close()    
+    #     if len(mapdict) != 0:
+    #         print "Writing Course Map JSON..."
+    #         cmjson = open('course_map.json', 'w')
+    #         cmjson.write(json.dumps(mapdict, default=lambda o: o.__dict__))
+    #         cmjson.close()
+    #     if len(mapdict) != 0:
+    #         print "Writing Keyword JSON..."
+    #         kwjson = open('keyword.json', 'w')
+    #         kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
+    #         kwjson.close()    
 
 
     def handle_refs(self, tree):
