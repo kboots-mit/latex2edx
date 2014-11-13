@@ -473,8 +473,8 @@ class latex2edx(object):
             labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
                 if label is not None:
-                    keyword = "test" #label.get()
-                    kwlist.append(keyword)
+                    # keyword = "test" #label.get()
+                    # kwlist.append(keyword)
                     # label.set('tmploc', locstr + '.0')
             seqnum = 0
             for child1 in chapter:
