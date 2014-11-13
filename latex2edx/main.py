@@ -456,6 +456,7 @@ class latex2edx(object):
         courselist = []  # ['loc. str.']
         coursedict = {}  # {'location str.':['URL','display_name','refnum']}
         kwlist = [] # ['keyword']
+        kwlookup = [] # [{label:'keyword'},{}]
         kwdict = {} # {'keyword':['location str','location str',...]}
         chapnum = 0
         chapref = seqref = vertref = '0'
@@ -479,6 +480,8 @@ class latex2edx(object):
                         kwdict[keyword].append(locstr)
                     else:
                         kwlist.append(keyword)
+                        kwobject["label"]=keyword
+                        kwlookup.append(kwobject)
                         kwdict[keyword]=[locstr]
             seqnum = 0
             for child1 in chapter:
@@ -541,7 +544,11 @@ class latex2edx(object):
             kwjson = open('keyword.json', 'w')
             kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
             kwjson.close()    
-
+        if len(kwlookup) != 0:
+            print "Writing Keyword Lookup JSON..."
+            kwjson = open('keyword_lookup.json', 'w')
+            kwjson.write(json.dumps(kwlookup, default=lambda o: o.__dict__))
+            kwjson.close()  
 
     def handle_refs(self, tree):
         '''
