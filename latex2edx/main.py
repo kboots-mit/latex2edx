@@ -460,7 +460,6 @@ class latex2edx(object):
         chapnum = 0
         chapref = seqref = vertref = '0'
         for chapter in tree.findall('.//chapter'):
-            print "Hello World"
             chapnum += 1
             if chapter.get('refnum') is not None:
                 chapref = chapter.get('refnum')
@@ -507,6 +506,7 @@ class latex2edx(object):
                         else:
                             kwlist.append(keyword)
                             kwdict[keyword]=[locstr]
+                        label.remove
                 if seqnum == 1:
                     coursedict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
