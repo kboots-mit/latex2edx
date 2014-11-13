@@ -502,7 +502,11 @@ class latex2edx(object):
                 for label in labels:
                     if label is not None:
                         keyword = label.text
-                        kwlist.append(keyword)
+                        if keyword in kwlist:
+                            kwdict[keyword].append(locstr)
+                        else:
+                            kwlist.append(keyword)
+                            kwdict[keyword]=[locstr]
                 if seqnum == 1:
                     coursedict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
@@ -529,7 +533,11 @@ class latex2edx(object):
                     for label in labels:
                         if label is not None:
                             keyword = label.text
-                            kwlist.append(keyword)
+                            if keyword in kwlist:
+                                kwdict[keyword].append(locstr)
+                            else:
+                                kwlist.append(keyword)
+                                kwdict[keyword]=[locstr]
 
         if len(coursedict) != 0:
             print "Writing Course Map JSON..."
