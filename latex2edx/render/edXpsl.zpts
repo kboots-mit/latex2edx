@@ -95,7 +95,7 @@ name: tocref
 <tocref tal:content='self'></tocref>
 
 name: keyword
-<keyword tal:attributes='number self/attributes/number;'></keyword>
+<keyword tal:attributes='number string:${self/attributes/number}' tal:content='self'></keyword>
 
 name: href
 <a tal:condition="python:len(self)" target="_blank" tal:attributes="href string:${self/attributes/url}" tal:content='self'></a>
