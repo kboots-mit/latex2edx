@@ -473,10 +473,8 @@ class latex2edx(object):
             labels = [chapter.find('./p/keyword'), chapter.find('./keyword')]
             for label in labels:
                 if label is not None:
-                    print "Keyword"
-                    # keyword = "test" #label.get()
-                    # kwlist.append(keyword)
-                    # label.set('tmploc', locstr + '.0')
+                    keyword = label.text
+                    kwlist.append(keyword)
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
@@ -498,7 +496,8 @@ class latex2edx(object):
                 labels = [seq.find('./p/keyword'), seq.find('./keyword')]
                 for label in labels:
                     if label is not None:
-                        print json.dumps(label, default=lambda o: o.__dict__)
+                        keyword = label.text
+                        kwlist.append(keyword)
                 if seqnum == 1:
                     coursedict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
@@ -524,17 +523,18 @@ class latex2edx(object):
                     labels = [vert.find('./p/keyword'), vert.find('./keyword')]
                     for label in labels:
                         if label is not None:
-                            print label.tostring(root, pretty_print=True)
+                            keyword = label.text
+                            kwlist.append(keyword)
 
         if len(coursedict) != 0:
             print "Writing Course Map JSON..."
             cmjson = open('course_map.json', 'w')
             cmjson.write(json.dumps(coursedict, default=lambda o: o.__dict__))
             cmjson.close()
-        if len(coursedict) != 0:
+        if len(kwlist) != 0:
             print "Writing Keyword JSON..."
             kwjson = open('keyword.json', 'w')
-            kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
+            kwjson.write(json.dumps(kwlist, default=lambda o: o.__dict__))
             kwjson.close()    
 
 
