@@ -538,6 +538,10 @@ class latex2edx(object):
                             else:
                                 kwlist.append(keyword)
                                 kwdict[keyword]=[locstr]
+        for keyword in tree.findall('.//keyword'):
+            pkey = keyword.getparent()
+            pkey.remove(tocref)
+
 
         if len(coursedict) != 0:
             print "Writing Course Map JSON..."
