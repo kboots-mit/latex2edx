@@ -214,7 +214,7 @@ class toclabel(Base.Command):
 class tocref(Base.Command):
     args = 'self'
 
-class keyword(Base.Command):
+class keyword(Base.Environment):
     args = '{ number } self'
 
 class href(Base.Command):
