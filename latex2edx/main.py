@@ -506,7 +506,7 @@ class latex2edx(object):
                         else:
                             kwlist.append(keyword)
                             kwdict[keyword]=[locstr]
-                        label.remove
+                        tree.remove(label)
                 if seqnum == 1:
                     coursedict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
