@@ -458,6 +458,7 @@ class latex2edx(object):
         kwlist = [] # ['keyword']
         kwlookup = [] # [{label:'keyword'},{}]
         kwdict = {} # {'keyword':['location str','location str',...]}
+        kwobject = {} #{label:'keyword'}
         chapnum = 0
         chapref = seqref = vertref = '0'
         for chapter in tree.findall('.//chapter'):
