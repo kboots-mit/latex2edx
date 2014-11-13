@@ -525,25 +525,6 @@ class latex2edx(object):
                     for label in labels:
                         if label is not None:
                             print label.tostring(root, pretty_print=True)
-                    for elem in vert.xpath('.//tocref|.//toclabel|.//label|'
-                                           './/table[@class="equation"]|'
-                                           './/table[@class="eqnarray"]|'
-                                           './/div[@class="figure"]'):
-                        elem.set('tmploc', locstr)
-                locstr = '.'.join(locstr.split('.')[:-1])
-                for elem in seq.xpath('.//tocref|.//toclabel|.//label|'
-                                      './/table[@class="equation"]|'
-                                      './/table[@class="eqnarray"]|'
-                                      './/div[@class="figure"]'):
-                    if elem.get('tmploc') is None:
-                        elem.set('tmploc', locstr)
-            locstr = '.'.join(locstr.split('.')[:-1])
-            for elem in chapter.xpath('.//tocref|.//toclabel|.//label|'
-                                      './/table[@class="equation"]|'
-                                      './/table[@class="eqnarray"]|'
-                                      './/div[@class="figure"]'):
-                if elem.get('tmploc') is None:
-                    elem.set('tmploc', locstr)
 
         if len(mapdict) != 0:
             print "Writing Course Map JSON..."
