@@ -540,7 +540,12 @@ class latex2edx(object):
                                 kwdict[keyword]=[locstr]
         for keyword in tree.findall('.//keyword'):
             pkey = keyword.getparent()
-            pkey.remove(keyword)
+            if pkey.tag == 'p':  # TODO: Find a clean way to build eTree
+                ppkey = pkey.getparent()
+                ppkey.remove(pkey)
+            else:
+                pkey.remove(keyword)
+
 
 
         if len(coursedict) != 0:
