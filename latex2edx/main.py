@@ -532,10 +532,10 @@ class latex2edx(object):
             cmjson = open('course_map.json', 'w')
             cmjson.write(json.dumps(coursedict, default=lambda o: o.__dict__))
             cmjson.close()
-        if len(kwlist) != 0:
+        if len(kwdict) != 0:
             print "Writing Keyword JSON..."
             kwjson = open('keyword.json', 'w')
-            kwjson.write(json.dumps(kwlist, default=lambda o: o.__dict__))
+            kwjson.write(json.dumps(kwdict, default=lambda o: o.__dict__))
             kwjson.close()    
 
 
