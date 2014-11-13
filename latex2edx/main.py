@@ -479,6 +479,7 @@ class latex2edx(object):
                     else:
                         kwlist.append(keyword)
                         kwdict[keyword]=[locstr]
+                    chapter.remove(label)
             seqnum = 0
             for child1 in chapter:
                 if child1.tag == 'p' and (child1.find('./') is not None):
@@ -506,7 +507,6 @@ class latex2edx(object):
                         else:
                             kwlist.append(keyword)
                             kwdict[keyword]=[locstr]
-                        tree.remove(label)
                 if seqnum == 1:
                     coursedict['{}'.format(chapnum)][0] = (
                         '../courseware/{}/{}/1'.format(chapurl, sequrl))
